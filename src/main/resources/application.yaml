@@ -1,0 +1,54 @@
+# 1. belge: her profilde geçerli ortak ayarlar
+server:
+  port: 8090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+
+spring:
+  application:
+    name: oto-galeri
+  profiles:
+    default: dev
+  jpa:
+    hibernate:
+      ddl-auto: validate   # tabloyu Hibernate değil Flyway oluşturur
+    open-in-view: false
+  datasource:
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 3000
+      leak-detection-threshold: 20000
+
+---
+# 2. belge: sadece dev profilinde geçerli
+spring:
+  config:
+    activate:
+      on-profile: dev
+  docker:
+    compose:
+      enabled: false   # yerel Postgres kullanıyoruz, compose'u başlatma
+  datasource:
+    url: jdbc:postgresql://localhost:5432/galeri
+    username: galeri
+    password: galeri
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+---
+# 3. belge: sadece prod profilinde geçerli
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}

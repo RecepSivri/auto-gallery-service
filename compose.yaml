@@ -1,9 +1,20 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:17'
+    container_name: oto-galeri-postgres
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: galeri
+      POSTGRES_USER: galeri
+      POSTGRES_PASSWORD: galeri
     ports:
-      - '5432'
+      - '5433:5432'
+    volumes:
+      - galeri-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U galeri -d galeri']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  galeri-pgdata:
